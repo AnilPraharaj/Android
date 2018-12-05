@@ -6,6 +6,7 @@ import java.util.Arrays;
 class CSVReader {
 
     public static void main(String[] args) {
+
         CSVReader obj = new CSVReader();
 
         String csvFile = "/home/rocky/Android/matches.csv";
@@ -44,6 +45,7 @@ class CSVReader {
         obj.matches_Won_Count_Yearly(year,win,year.length-1);//Function call to count Won Team in yearly level//
 
         //3. Function Call
+        obj.count_Extra_Runs();//Function call to count extra runs for each Team//
 
     }
 
@@ -111,6 +113,68 @@ class CSVReader {
         }
 
     }
-    
+    void count_Extra_Runs()
+    {
+        //-------------------------------------------------------------------//
+        //Code for year 2016 get the extra runs conceded per team------------//
+        //-------------------------------------------------------------------//
+        String csvFile1 = "/home/rocky/Android/deliveries.csv";
+        String line = "";
+        String cvsSplitBy = ",";
+        int count = 0;
+        int j,r=0;
+        String strTemp;
+        String bowling_Team[]=new String[14096];
+        int extra_Run[]=new int[14096];
+        try (BufferedReader br1 = new BufferedReader(new FileReader(csvFile1))) {
+
+            while ((line = br1.readLine()) != null) {
+
+                // use comma as separator
+                String[] data = line.split(cvsSplitBy);
+
+                if (r!=0 && (Integer.parseInt(data[0]))>=577) {
+                    count++;
+
+                    bowling_Team[count-1]=data[3];
+                    extra_Run[count-1]=Integer.parseInt(data[16]);
+                }
+                r++;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        int temp;
+        //Sort mergeString in ascending order
+        for (int i = 0; i < count; i++) {
+            for (j = 1; j < (count - i); j++) {
+                if (bowling_Team[j - 1].compareTo( bowling_Team[j] ) > 0) {
+                    strTemp = bowling_Team[j - 1];
+                    bowling_Team[j - 1] = bowling_Team[j];
+                    bowling_Team[j] = strTemp;
+                    temp = extra_Run[j - 1];
+                    extra_Run[j - 1] = extra_Run[j];
+                    extra_Run[j] = temp;
+                }
+
+            }
+        }
+
+        int total_extra_run=0;
+        System.out.println("Extra Runs in 2016");
+        for(int i=0;i<count;i=j)
+        {
+            total_extra_run=0;
+            for(j=i;j<count;j++)
+            {
+                if (bowling_Team[i].compareTo(bowling_Team[j]) != 0) {
+                    break;
+                }
+                total_extra_run+=extra_Run[j];
+            }
+            System.out.println("Extra Runs by "+bowling_Team[i]+" is "+total_extra_run);
+        }
+    }
 
 }
